@@ -1,0 +1,25 @@
+{
+  "name": "nanoconnect",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brendena/NanoConnect.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brendena/NanoConnect/issues"
+  },
+  "homepage": "https://github.com/brendena/NanoConnect#readme",
+  "dependencies": {
+    "bittorrent-tracker": "^9.14.5",
+    "install": "^0.13.0",
+    "magnet-uri": "^5.2.4",
+    "wrtc": "^0.4.4"
+  }
+}
