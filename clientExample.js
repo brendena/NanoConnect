@@ -1,4 +1,4 @@
-var NanoConnectClient = require('./clientIndex')
+var NanoConnectClient = require('./clientMessagesIndex')
 
 
 var nanoClient = new NanoConnectClient();
@@ -14,7 +14,7 @@ async function queryDemo() {
         console.log("got here")
         while(true)
         {
-          var  received = await nanoClient.sendMessage("testing this out")
+          var  received = await nanoClient.block_count()
           console.log("hello " + received);
           await sleep(1000);
         }

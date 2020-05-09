@@ -2,11 +2,14 @@
 
 var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
+const BJSON = require('buffer-json')
 var wrtc = require('wrtc')
+var NanoRPCHandler = require('./NanoRPCHandler');
+
 const { EventEmitter } = require('events')
 
-var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com"
-
+//var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com"
+var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=ws://localhost:8000"
 
 var generateRandomID = function()
 {
@@ -47,15 +50,19 @@ class NanoConnectServer extends EventEmitter {
             console.log('number of seeders in the swarm: ' + data.complete)
             console.log('number of leechers in the swarm: ' + data.incomplete)
         })
+
+        this.rpcHandler = new NanoRPCHandler();
     }
 
     _connectTrackingServer(cb)
     {
         this.btClient.start();
-        this.btClient.once('peer', (peer)=> {
+        this.btClient.on('peer', (peer)=> {
             console.log('-------------------found a peer: ') 
+            console.log(peer._id)
             peer.once('connect', ()=>{
                 //connected up
+
                 cb(peer);
             });
         })
@@ -66,15 +73,20 @@ class NanoConnectServer extends EventEmitter {
     {
         this._connectTrackingServer((peer)=>{
             console.log("connected Server");
-            console.log(peer)
-            peer.on("data", data=>{
-                //console.log(this.peer._id)
+            peer.once('error', (error)=>{
+                console.log(error);
+            });
+            peer.on("data",async data=>{
+                console.log(peer._id)
                 //do validation on data
                 console.log("*************************received data " + data);
                 //send out a message to the server
-
+                console.log(data.toString())
+                var data = JSON.parse(data.toString());
+                var returnData  = await this.rpcHandler.send(data.method, data.params)
                 //then respond by sending back the data
-                peer.send(data);
+                console.log(returnData)
+                peer.send(returnData.toString());
                
             });
         });
