@@ -32,74 +32,53 @@ var requiredOpts = {
 //need to manage multiple peer trying to conenct
 
 // 
-class NanoConnect extends EventEmitter {
+class NanoConnectServer extends EventEmitter {
     constructor (opts = {}) {
         super()
-        this.client = new Client(requiredOpts)
+        this.btClient = new Client(requiredOpts)
 
-        this.client.on('error', function (err) {
+        this.btClient.on('error', function (err) {
             // fatal client error!
             console.log(err.message)
             this.emit('error', err)
         })
-        this.client.on('update', function (data) {
+        this.btClient.on('update', function (data) {
             console.log('got an announce response from tracker: ' + data.announce)
             console.log('number of seeders in the swarm: ' + data.complete)
             console.log('number of leechers in the swarm: ' + data.incomplete)
         })
-
-        this.peer = null;
     }
 
     _connectTrackingServer(cb)
     {
-        this.client.start();
-        this.client.once('peer', (peer)=> {
-            console.log("testing this");
-            console.log('-------------------found a peer: ' + peer) 
-
+        this.btClient.start();
+        this.btClient.once('peer', (peer)=> {
+            console.log('-------------------found a peer: ') 
             peer.once('connect', ()=>{
-                console.log("connected up")
-                this.peer = peer;
-                cb();
-
+                //connected up
+                cb(peer);
             });
         })
     }
 
-    startClientTransactions()
-    {
-        this._connectTrackingServer(()=>{console.log("connected client")});
-    }
-
-    sendTransaction(jsonMessage)
-    {
-        return new Promise((resolve, reject) => {
-            console.log("sending a message");
-            this.peer.send(jsonMessage);
-            
-            this.peer.once("data", data=>{
-                resolve(data);
-            });
-        });
-    }
-
-    sendMessage(jsonMessage)
-    {
-        this.peer.send(jsonMessage);
-    }
 
     startClientEvent()
     {
-        this._connectTrackingServer(()=>{
+        this._connectTrackingServer((peer)=>{
             console.log("connected Server");
-            console.log(this.peer)
-            this.peer.on("data", data=>{
+            console.log(peer)
+            peer.on("data", data=>{
+                //console.log(this.peer._id)
+                //do validation on data
                 console.log("*************************received data " + data);
-                this.emit('data', data)
+                //send out a message to the server
+
+                //then respond by sending back the data
+                peer.send(data);
+               
             });
         });
     }
 }
 
-module.exports = NanoConnect
+module.exports = NanoConnectServer

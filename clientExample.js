@@ -1,14 +1,34 @@
-var NanoConnect = require('./index')
-
-var nanoConn = new NanoConnect();
-
-nanoConn.startClientTransactions();
+var NanoConnectClient = require('./clientIndex')
 
 
+var nanoClient = new NanoConnectClient();
 
-setTimeout(()=>{
-    nanoConn.sendTransaction("testing").then((data)=>{
-        console.log("got a message")
-        console.log(data)
-    });
-}, 10000);
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function queryDemo() {
+    try {
+     
+        await nanoClient.connect();
+        console.log("got here")
+        while(true)
+        {
+          var  received = await nanoClient.sendMessage("testing this out")
+          console.log("hello " + received);
+          await sleep(1000);
+        }
+        
+    } catch (error) {
+      console.error("\nError: " + error.message);
+      return
+    }
+  
+  }
+
+
+queryDemo();
+
+nanoClient.on("functionTest",()=>{
+  console.log("i don't know")
+});

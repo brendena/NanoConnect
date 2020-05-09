@@ -12,8 +12,10 @@ var parsedTorrent = magnet(magnetURI)
 
 var requiredOpts = {
     infoHash: parsedTorrent.infoHash, // hex string or Buffer
-    peerId:   Buffer.alloc(20, 'NanoClientID________'), // hex string or Buffer
+    peerId:   Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
     announce: parsedTorrent.announce,
+    port: 6881, // torrent client port, (in browser, optional)
+    wrtc: wrtc
   }
 
 //need to manage multiple peer trying to conenct
@@ -38,55 +40,34 @@ class NanoConnectClient extends EventEmitter {
         this.peer = null;
     }
 
-    _connectTrackingServer(cb)
+    connect()
     {
+        console.log("connecting ")
+        console.log("start")
         this.client.start();
-        this.client.once('peer', (peer)=> {
-            console.log("testing this");
-            console.log('-------------------found a peer: ' + peer) 
-
-            peer.once('connect', ()=>{
-                console.log("connected up")
-                this.peer = peer;
-                cb();
-
-            });
-        })
-    }
-
-    startClientTransactions()
-    {
-        this._connectTrackingServer(()=>{console.log("connected client")});
-    }
-
-    sendTransaction(jsonMessage)
-    {
         return new Promise((resolve, reject) => {
-            console.log("sending a message");
-            this.peer.send(jsonMessage);
-            
-            this.peer.once("data", data=>{
-                resolve(data);
-            });
+            this.client.update();
+            this.client.once('peer', (peer)=> {
+                peer.once('connect', ()=>{
+                    console.log("connected up")
+                    this.peer = peer;
+                    return resolve();
+                });
+            })
         });
     }
 
     sendMessage(jsonMessage)
     {
-        this.peer.send(jsonMessage);
-    }
-
-    startClientEvent()
-    {
-        this._connectTrackingServer(()=>{
-            console.log("connected Server");
-            console.log(this.peer)
-            this.peer.on("data", data=>{
-                console.log("*************************received data " + data);
-                this.emit('data', data)
+        return new Promise((resolve, reject) => {
+            this.peer.send(jsonMessage);
+            this.peer.once('data', (data)=>{
+                console.log("connected up");
+                return resolve(data);
             });
         });
+
     }
 }
 
-module.exports = NanoConnect
+module.exports = NanoConnectClient
