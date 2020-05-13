@@ -22,5 +22,8 @@
     "install": "^0.13.0",
     "magnet-uri": "^5.2.4",
     "wrtc": "^0.4.4"
+  },
+  "devDependencies": {
+    "yargs": "^15.3.1"
   }
 }

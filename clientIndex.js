@@ -66,6 +66,11 @@ class NanoConnectBaseClient extends EventEmitter {
         });
     }
 
+    disconnect()
+    {
+        this.peer.destroy();
+    }
+
     /**
      * @function _buildRPCReq
      * @private
