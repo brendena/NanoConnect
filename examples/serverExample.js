@@ -2,6 +2,8 @@ var NanoConnectServer = require('../serverIndex.js')
 
 var nanoConn = new NanoConnectServer();
 
+console.log("started server")
+
 nanoConn.startClientEvent();
 
 nanoConn.on("data",(message)=>{

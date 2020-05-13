@@ -20,7 +20,7 @@ var generateRandomID = function()
 }
 
 var peerId = generateRandomID();
-console.log(peerId.length);
+
 
 var parsedTorrent = magnet(magnetURI)
 

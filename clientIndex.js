@@ -1,5 +1,3 @@
-
-
 var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
 var wrtc = require('wrtc')
@@ -14,9 +12,7 @@ var parsedTorrent = magnet(magnetURI)
 var requiredOpts = {
     infoHash: parsedTorrent.infoHash, // hex string or Buffer
     peerId:   Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
-    announce: parsedTorrent.announce,
-    port: 6881, // torrent client port, (in browser, optional)
-    wrtc: wrtc
+    announce: parsedTorrent.announce
   }
 
 //need to manage multiple peer trying to conenct
@@ -25,6 +21,15 @@ var requiredOpts = {
 class NanoConnectBaseClient extends EventEmitter {
     constructor (opts = {}) {
         super()
+        if(opts.wrtc != undefined)
+        {
+            requiredOpts.wrtc = opts.wrtc
+        }
+        if(opts.port != undefined)
+        {
+            requiredOpts.port = opts.port;
+        }
+
         this.btClient = new Client(requiredOpts)
 
         this.btClient.on('error', function (err) {

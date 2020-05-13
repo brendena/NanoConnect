@@ -3,7 +3,7 @@ var NanoConnectBase = require('./clientIndex')
 
 class NanoConnectClient extends NanoConnectBase {
     constructor (opts = {}) {
-        super()
+        super(opts)
     }
 
     /**
