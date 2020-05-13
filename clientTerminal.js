@@ -2,8 +2,8 @@
 
 var yargs = require('yargs')
 
-var argv = yargs.locale("en")
 
+var argv = yargs.locale("en")
 
 
 
@@ -16,6 +16,8 @@ function executeNanoTerminal(nanoClient, arguments) {
             //var  received = await nanoClient.block_count()
             //console.log("hello " + received);
             var returnPromise;
+            
+            argv.reset();
             argv.command("block_count", "Reports the number of blocks in the ledger.", () => {
                 returnPromise = nanoClient.block_count();
             })

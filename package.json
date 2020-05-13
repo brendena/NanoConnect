@@ -1,6 +1,6 @@
 {
   "name": "nanoconnect",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
     "wrtc": "^0.4.4"
   },
   "devDependencies": {
+    "gh-pages": "^2.2.0",
     "yargs": "^15.3.1"
   }
 }
