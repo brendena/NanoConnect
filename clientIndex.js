@@ -41,8 +41,14 @@ class NanoConnectBaseClient extends EventEmitter {
         this.peer = null;
     }
 
+    connectedToServer()
+    {
+        return !(this.peer == null);
+    }
+
     connect()
     {
+        
         console.log("connecting ")
         console.log("start")
         this.btClient.start();

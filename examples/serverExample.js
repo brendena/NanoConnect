@@ -1,4 +1,4 @@
-var NanoConnectServer = require('./serverIndex.js')
+var NanoConnectServer = require('../serverIndex.js')
 
 var nanoConn = new NanoConnectServer();
 
