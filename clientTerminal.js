@@ -38,17 +38,19 @@ function executeNanoTerminal(nanoClient, arguments) {
                     console.log(output)
                 });
 
+
             returnPromise.then((message) => {
                 if (message != "") {
-                    output = output.split("\n").join("\r\n");
-                    output += "\r\n";
-                    resolve(output);
+                    var messageString = message.toString();
+                    console.log(messageString)
+                    messageString = messageString.split("\n").join("\r\n");
+                    messageString += "\r\n";
+                    resolve(messageString);
                 }
                 else {
                     reject("ERROR:no message")
                 }
             });
-
 
 
         } catch (error) {

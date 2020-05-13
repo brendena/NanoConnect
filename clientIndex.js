@@ -3,30 +3,29 @@ var magnet = require('magnet-uri')
 var wrtc = require('wrtc')
 const { EventEmitter } = require('events')
 
-//var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com"
-var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=ws://localhost:8000"
 
 
-var parsedTorrent = magnet(magnetURI)
 
-var requiredOpts = {
-    infoHash: parsedTorrent.infoHash, // hex string or Buffer
-    peerId:   Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
-    announce: parsedTorrent.announce
-  }
 
 //need to manage multiple peer trying to conenct
 
 // 
 class NanoConnectBaseClient extends EventEmitter {
-    constructor (opts = {}) {
+    constructor(magnetURI, opts = {}) {
+        
+        var parsedTorrent = magnet(magnetURI)
+
+        var requiredOpts = {
+            infoHash: parsedTorrent.infoHash, // hex string or Buffer
+            peerId: Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
+            announce: parsedTorrent.announce
+        }
+
         super()
-        if(opts.wrtc != undefined)
-        {
+        if (opts.wrtc != undefined) {
             requiredOpts.wrtc = opts.wrtc
         }
-        if(opts.port != undefined)
-        {
+        if (opts.port != undefined) {
             requiredOpts.port = opts.port;
         }
 
@@ -46,58 +45,54 @@ class NanoConnectBaseClient extends EventEmitter {
         this.peer = null;
     }
 
-    connectedToServer()
-    {
+    connectedToServer() {
         return !(this.peer == null);
     }
 
-    connect()
-    {
-        
+    connect() {
+
         console.log("connecting ")
         console.log("start")
         this.btClient.start();
         return new Promise((resolve, reject) => {
             this.btClient.update();
-            this.btClient.once('peer', (peer)=> {
-                peer.once('connect', ()=>{
+            this.btClient.once('peer', (peer) => {
+                peer.once('connect', () => {
                     console.log("connected up")
                     this.peer = peer;
 
-                    this.peer.once('error', ()=>{
+                    this.peer.once('error', () => {
                         console.log("***************peer error");
                     });
 
                     return resolve();
                 });
                 this.btClient.stop();
-                
+
             })
-           
+
         });
     }
 
-    disconnect()
-    {
+    disconnect() {
         this.peer.destroy();
     }
 
 
 
-    _send(method, params = {})
-    {
+    _send(method, params = {}) {
         return new Promise((resolve, reject) => {
             var sendingJsonMessage = {
                 "method": method,
                 "params": params
             }
-    
+
             this.peer.send(JSON.stringify(sendingJsonMessage));
-            this.peer.once('data', (data)=>{
+            this.peer.once('data', (data) => {
                 console.log("connected up");
                 return resolve(data);
             });
-            
+
         });
 
     }

@@ -1,5 +1,3 @@
-
-
 var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
 const BJSON = require('buffer-json')
@@ -7,9 +5,6 @@ var wrtc = require('wrtc')
 var NanoRPCHandler = require('./NanoRPCHandler');
 
 const { EventEmitter } = require('events')
-
-//var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com"
-var magnetURI =  "magnet:?xt=urn:btih:dd59ca795c689b00713f9f2bb15379b32bb13cbc&dn=DataSheBlow.png&tr=ws://localhost:8000"
 
 var generateRandomID = function()
 {
@@ -19,25 +14,26 @@ var generateRandomID = function()
     return (randomString + randomString).substring(0, 20);
 }
 
-var peerId = generateRandomID();
 
-
-var parsedTorrent = magnet(magnetURI)
-
-var requiredOpts = {
-    infoHash: parsedTorrent.infoHash, // hex string or Buffer
-    peerId:   Buffer.alloc(20, generateRandomID()), // hex string or Buffer
-    announce: parsedTorrent.announce,
-    port: 6881, // torrent client port, (in browser, optional)
-    wrtc: wrtc
-  }
 
 //need to manage multiple peer trying to conenct
 
 // 
 class NanoConnectServer extends EventEmitter {
-    constructor (opts = {}) {
+    constructor (magnetURI, opts = {}) {
         super()
+
+        var parsedTorrent = magnet(magnetURI)
+
+        var requiredOpts = {
+            infoHash: parsedTorrent.infoHash, // hex string or Buffer
+            peerId:   Buffer.alloc(20, generateRandomID()), // hex string or Buffer
+            announce: parsedTorrent.announce,
+            port: 6881, // torrent client port, (in browser, optional)
+            wrtc: wrtc
+          }
+
+
         this.btClient = new Client(requiredOpts)
 
         this.btClient.on('error', function (err) {

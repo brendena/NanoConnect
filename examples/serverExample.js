@@ -1,6 +1,8 @@
+var magnetURI = require('../mangnetURI.js');
+
 var NanoConnectServer = require('../serverIndex.js')
 
-var nanoConn = new NanoConnectServer();
+var nanoConn = new NanoConnectServer(magnetURI);
 
 console.log("started server")
 

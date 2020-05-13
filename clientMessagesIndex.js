@@ -2,8 +2,8 @@
 var NanoConnectBase = require('./clientIndex')
 
 class NanoConnectClient extends NanoConnectBase {
-    constructor (opts = {}) {
-        super(opts)
+    constructor (magnetURI, opts = {}) {
+        super(magnetURI,opts)
     }
 
     /**
