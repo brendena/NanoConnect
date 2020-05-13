@@ -82,36 +82,6 @@ class NanoConnectBaseClient extends EventEmitter {
         this.peer.destroy();
     }
 
-    /**
-     * @function _buildRPCReq
-     * @private
-     * @description Create an RPC request object to be later used by `#_send`.
-     * @param {string} action - A given RPC action.
-     * @param {Object|Array} params - Parameters to be passed to the RPC daemon
-     * @return {Object} Returns an object containing the request (url, body).
-     */
-    _buildRPCReq(action, params) {
-        const req = {};
-        const payload = null;
-
-        req.url = this.nodeAddress;
-
-        try {
-            if (typeof params === "undefined") {
-                req.body = JSON.stringify({
-                action: action
-                });
-            } else {
-                req.body = JSON.stringify({
-                action: action,
-                ...params
-                });
-            }
-            return req;
-        } catch (e) {
-            throw new Error(e);
-        }
-    }
 
 
     _send(method, params = {})

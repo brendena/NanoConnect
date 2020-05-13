@@ -30,17 +30,23 @@ function executeNanoTerminal(nanoClient, arguments) {
                 .alias('h', 'help').
                 parse(arguments, (_err, argv, output) => {
                     if (output != "") {
-                        console.log(output)
                         output = output.split("\n").join("\r\n");
                         output += "\r\n";
-                        returnOutput = output;
+                        resolve(output);
                     }
 
                     console.log(output)
                 });
 
             returnPromise.then((message) => {
-                resolve(message);
+                if (message != "") {
+                    output = output.split("\n").join("\r\n");
+                    output += "\r\n";
+                    resolve(output);
+                }
+                else {
+                    reject("ERROR:no message")
+                }
             });
 
 
