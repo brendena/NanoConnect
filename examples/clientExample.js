@@ -5,6 +5,7 @@ var wrtc = require('wrtc')
 
 
 var nanoClient = new NanoConnectClient(magnetURI, {port:6881,wrtc:wrtc});
+nanoClient.connect();
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -13,7 +14,7 @@ function sleep(ms) {
 async function queryDemo() {
     try {
      
-        await nanoClient.connect();
+        await nanoClient.waitForConnection(); 
         console.log("got here")
         while(true)
         {

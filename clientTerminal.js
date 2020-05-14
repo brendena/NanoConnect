@@ -24,11 +24,37 @@ function executeNanoTerminal(nanoClient, arguments) {
                 .command("block_count_type", "Reports the number of blocks in the ledger by type.", () => {
                     returnPromise = nanoClient.block_count_type();
                 })
+                .command("mrai_from_raw", "Divide a raw amount down by the Mrai ratio.", (yarg) => {
+                    if (yarg.argv._.length == 2) {
+                        returnPromise = nanoClient.mrai_from_raw(yarg.argv._[1]);
+                    }
+                })
+                .command("mrai_to_raw", "Multiply an Mrai amount by the Mrai ratio.", (yarg) => {
+                    if (yarg.argv._.length == 2) {
+                        returnPromise = nanoClient.mrai_to_raw(yarg.argv._[1]);
+                    }
+                })
+                .command("krai_from_raw", "Divide a raw amount down by the krai ratio.", (yarg) => {
+                    if (yarg.argv._.length == 2) {
+                        returnPromise = nanoClient.krai_from_raw(yarg.argv._[1]);
+                    }
+                })
+                .command("krai_to_raw", "Multiply an krai amount by the krai ratio.", (yarg) => {
+                    if (yarg.argv._.length == 2) {
+                        returnPromise = nanoClient.krai_to_raw(yarg.argv._[1]);
+                    }
+                })
+                .command("rai_from_raw", "Divide a raw amount down by the rai ratio.", (yarg) => {
+                    if (yarg.argv._.length == 2) {
+                        returnPromise = nanoClient.rai_from_raw(yarg.argv._[1]);
+                    }
+                })
                 .command("rai_to_raw", "Multiply an rai amount by the rai ratio.", (yarg) => {
                     if (yarg.argv._.length == 2) {
                         returnPromise = nanoClient.rai_to_raw(yarg.argv._[1]);
                     }
-                }).help('h')
+                })
+                .help('h')
                 .alias('h', 'help').
                 parse(arguments, (_err, argv, output) => {
                     if (output != "") {

@@ -12,24 +12,38 @@ const { EventEmitter } = require('events')
 // 
 class NanoConnectBaseClient extends EventEmitter {
     constructor(magnetURI, opts = {}) {
-        
+        super();
+
+
         var parsedTorrent = magnet(magnetURI)
 
-        var requiredOpts = {
+        this.requiredOpts = {
             infoHash: parsedTorrent.infoHash, // hex string or Buffer
             peerId: Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
             announce: parsedTorrent.announce
         }
 
-        super()
         if (opts.wrtc != undefined) {
-            requiredOpts.wrtc = opts.wrtc
+            this.requiredOpts.wrtc = opts.wrtc
         }
         if (opts.port != undefined) {
-            requiredOpts.port = opts.port;
+            this.requiredOpts.port = opts.port;
         }
 
-        this.btClient = new Client(requiredOpts)
+        this.btClient = null;
+        this.peer = null;
+    }
+
+    connectBTClient()
+    {
+        if(this.btClient != null)
+        {
+            this.btClient.destroy();
+        }
+        console.log("-----------------------desting my connection and trying again\n");
+        
+
+        this.btClient = new Client(this.requiredOpts)
 
         this.btClient.on('error', function (err) {
             // fatal client error!
@@ -41,49 +55,72 @@ class NanoConnectBaseClient extends EventEmitter {
             console.log('number of seeders in the swarm: ' + data.complete)
             console.log('number of leechers in the swarm: ' + data.incomplete)
         })
+        this.btClient.start();
+        this.btClient.update();
+        this.btClient.once('peer', (peer) => { 
+            
+            
 
-        this.peer = null;
+            peer.once('connect', () => {
+                console.log("connected up")
+                this.emit('connected');
+                this.peer = peer;
+
+                this.peer.once('error', () => {
+                    console.log("***************peer error ");
+                });
+            });
+
+            peer.once('close',()=>{
+                console.log("-------------closed")
+                this.peer.destroy();
+                this.peer = null;
+            });
+
+            peer.once('error',(error)=>{
+                console.log(error)
+                console.log("------------------errror")
+                this.peer.destroy();
+                this.peer = null;
+            });
+
+            this.btClient.stop();
+        });
     }
 
     connectedToServer() {
         return !(this.peer == null);
     }
 
-    connect() {
-
-        console.log("connecting ")
-        console.log("start")
-        this.btClient.start();
+    waitForConnection() {
         return new Promise((resolve, reject) => {
-            this.btClient.update();
-            this.btClient.once('peer', (peer) => {
-                peer.once('connect', () => {
-                    console.log("connected up")
-                    this.peer = peer;
-
-                    this.peer.once('error', () => {
-                        console.log("***************peer error");
-                    });
-
-                    return resolve();
-                });
-
-                peer.once('close',()=>{
-                    console.log("-------------closed")
-                    this.peer.destroy();
-                    this.peer = null;
-                });
-
-                peer.once('error',(error)=>{
-                    console.log(error)
-                    console.log("------------------errror")
-                });
-
-                this.btClient.stop();
-
-            })
-
+            if(this.connectedToServer())
+            {
+                return resolve();
+            }
+            console.log(this)
+            this.on('connected',()=>{
+                console.log("-------------------------------got the emit\n");
+                return resolve();
+            });
+        
         });
+    }
+
+    connect() {
+        
+
+        var loggingInLoop =  ()=>{
+            this.connectBTClient();
+
+            setTimeout(()=>{
+                if(!this.connectedToServer()){
+                    loggingInLoop();
+
+                }
+            }, 10000);
+        }
+        loggingInLoop();
     }
 
     disconnect() {
