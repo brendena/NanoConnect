@@ -67,6 +67,18 @@ class NanoConnectBaseClient extends EventEmitter {
 
                     return resolve();
                 });
+
+                peer.once('close',()=>{
+                    console.log("-------------closed")
+                    this.peer.destroy();
+                    this.peer = null;
+                });
+
+                peer.once('error',(error)=>{
+                    console.log(error)
+                    console.log("------------------errror")
+                });
+
                 this.btClient.stop();
 
             })

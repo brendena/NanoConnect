@@ -15,7 +15,7 @@ function executeNanoTerminal(nanoClient, arguments) {
             console.log(arguments)
             //var  received = await nanoClient.block_count()
             //console.log("hello " + received);
-            var returnPromise;
+            var returnPromise = null;
             
             argv.reset();
             argv.command("block_count", "Reports the number of blocks in the ledger.", () => {
@@ -40,19 +40,24 @@ function executeNanoTerminal(nanoClient, arguments) {
                     console.log(output)
                 });
 
-
-            returnPromise.then((message) => {
-                if (message != "") {
-                    var messageString = message.toString();
-                    console.log(messageString)
-                    messageString = messageString.split("\n").join("\r\n");
-                    messageString += "\r\n";
-                    resolve(messageString);
-                }
-                else {
-                    reject("ERROR:no message")
-                }
-            });
+            if(returnPromise == null)
+            {
+                reject("ERROR:Not a command");
+            }
+            else{
+                returnPromise.then((message) => {
+                    if (message != "") {
+                        var messageString = message.toString();
+                        console.log(messageString)
+                        messageString = messageString.split("\n").join("\r\n");
+                        messageString += "\r\n";
+                        resolve(messageString);
+                    }
+                    else {
+                        reject("ERROR:no message")
+                    }
+                });
+            }
 
 
         } catch (error) {
