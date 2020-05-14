@@ -4,13 +4,14 @@ var magnetURI = require('../mangnetURI.js');
 var wrtc = require('wrtc')
 
 var nanoClient = new NanoConnectClient(magnetURI, {port:6881,wrtc:wrtc});
-
+nanoClient.connect();
 
 async function terminalLoop(arguments) {
     try {
+
         if(!nanoClient.connectedToServer())
         {
-            await nanoClient.connect();
+            await nanoClient.waitForConnection();
         }
         var returnString = await executeNanoTerminal(nanoClient,arguments);
         console.log("got back" + returnString);
@@ -43,3 +44,6 @@ terminalLoop(arguments);
 nanoClient.on("functionTest", () => {
     console.log("i don't know")
 });
+setTimeout(function(){
+    console.log("test");
+},1000000000  )

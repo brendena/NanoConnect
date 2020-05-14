@@ -38,9 +38,10 @@ class NanoConnectBaseClient extends EventEmitter {
     {
         if(this.btClient != null)
         {
+            console.log("-----------------------desting my connection and trying again\n");
             this.btClient.destroy();
         }
-        console.log("-----------------------desting my connection and trying again\n");
+        
         
 
         this.btClient = new Client(this.requiredOpts)
@@ -98,7 +99,6 @@ class NanoConnectBaseClient extends EventEmitter {
             {
                 return resolve();
             }
-            console.log(this)
             this.on('connected',()=>{
                 console.log("-------------------------------got the emit\n");
                 return resolve();
