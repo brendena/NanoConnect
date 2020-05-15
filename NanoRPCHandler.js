@@ -47,7 +47,7 @@ class NanoRPCHandler {
           }
     
           // Take HTTPS urls in consideration.
-          console.log("test!!!!!!!!!!!!!!!!!!")
+          
           const lib = http;
           const requestOptions = {
             hostname: "0:0:0:0:0:0:0:1",
@@ -56,7 +56,6 @@ class NanoRPCHandler {
             path: "/",
             headers: this.headers
           };
-          console.log(requestOptions)
           const request = lib.request(requestOptions, response => {
             if (response.statusCode < 200 || response.statusCode > 299) {
               reject(
@@ -76,7 +75,7 @@ class NanoRPCHandler {
               const data = body.join("");
     
               try {
-                console.log(data);
+                //console.log(data);
                 return resolve(data); 
               } catch (e) {
                 reject(e);

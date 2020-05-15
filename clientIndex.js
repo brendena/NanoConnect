@@ -1,17 +1,19 @@
 var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
 var wrtc = require('wrtc')
+var magnetURIDefault = require('./mangnetURI.js');
 const { EventEmitter } = require('events')
+const debug = require('debug');
 
-
-
+const logInfo = require('debug')('nanoClient:index:info');
+const errorLog = require('debug')('nanoClient:index:error');
 
 
 //need to manage multiple peer trying to conenct
 
 // 
 class NanoConnectBaseClient extends EventEmitter {
-    constructor(magnetURI, opts = {}) {
+    constructor(magnetURI = magnetURIDefault, opts = {}) {
         super();
 
 
@@ -38,7 +40,7 @@ class NanoConnectBaseClient extends EventEmitter {
     {
         if(this.btClient != null)
         {
-            console.log("-----------------------desting my connection and trying again\n");
+            errorLog("took longer then 5 seconds to connect.  Going to reset connectoin");
             this.btClient.destroy();
         }
         
@@ -48,13 +50,13 @@ class NanoConnectBaseClient extends EventEmitter {
 
         this.btClient.on('error', function (err) {
             // fatal client error!
-            console.log(err.message)
+            errorLog(err.message)
             this.emit('error', err)
         })
         this.btClient.on('update', function (data) {
-            console.log('got an announce response from tracker: ' + data.announce)
-            console.log('number of seeders in the swarm: ' + data.complete)
-            console.log('number of leechers in the swarm: ' + data.incomplete)
+            logInfo('got an announce response from tracker: ' + data.announce)
+            logInfo('number of seeders in the swarm: ' + data.complete)
+            logInfo('number of leechers in the swarm: ' + data.incomplete)
         })
         this.btClient.start();
         this.btClient.update();
@@ -63,27 +65,32 @@ class NanoConnectBaseClient extends EventEmitter {
             
 
             peer.once('connect', () => {
-                console.log("connected up")
+                logInfo(peer._id + " peerConnected")
                 this.emit('connected');
                 this.peer = peer;
 
-                this.peer.once('error', () => {
-                    console.log("***************peer error ");
+
+                peer.once('close',()=>{
+                    logInfo(peer._id + " peerConnected")
+                    if(this.peer != null)
+                    {
+                        this.peer.destroy();
+                        this.peer = null;
+                    } 
                 });
+    
+                peer.once('error',(error)=>{
+                    logError(error)
+                    if(!peer._readableState.destroyed)
+                    {
+                        peer.destory();
+                    }
+                    this.peer = null;
+                });
+                
             });
 
-            peer.once('close',()=>{
-                console.log("-------------closed")
-                this.peer.destroy();
-                this.peer = null;
-            });
-
-            peer.once('error',(error)=>{
-                console.log(error)
-                console.log("------------------errror")
-                this.peer.destroy();
-                this.peer = null;
-            });
+     
 
             this.btClient.stop();
         });
@@ -100,7 +107,6 @@ class NanoConnectBaseClient extends EventEmitter {
                 return resolve();
             }
             this.on('connected',()=>{
-                console.log("-------------------------------got the emit\n");
                 return resolve();
             });
         
@@ -108,8 +114,6 @@ class NanoConnectBaseClient extends EventEmitter {
     }
 
     connect() {
-        
-
         var loggingInLoop =  ()=>{
             this.connectBTClient();
 
@@ -118,7 +122,7 @@ class NanoConnectBaseClient extends EventEmitter {
                     loggingInLoop();
 
                 }
-            }, 10000);
+            }, 6000);
         }
         loggingInLoop();
     }
@@ -138,7 +142,7 @@ class NanoConnectBaseClient extends EventEmitter {
 
             this.peer.send(JSON.stringify(sendingJsonMessage));
             this.peer.once('data', (data) => {
-                console.log("connected up");
+                logInfo(data);
                 return resolve(data);
             });
 

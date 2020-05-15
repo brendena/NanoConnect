@@ -2,9 +2,12 @@ var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
 const BJSON = require('buffer-json')
 var wrtc = require('wrtc')
+var magnetURIDefault = require('./mangnetURI.js');
 var NanoRPCHandler = require('./NanoRPCHandler');
-
 const { EventEmitter } = require('events')
+
+const infoLog = require('debug')('nanoServerInfo:index:info');
+const errorLog = require('debug')('nanoServer:index:error');
 
 var generateRandomID = function()
 {
@@ -20,7 +23,7 @@ var generateRandomID = function()
 
 // 
 class NanoConnectServer extends EventEmitter {
-    constructor (magnetURI, opts = {}) {
+    constructor (magnetURI = magnetURIDefault, opts = {}) {
         super()
 
         var parsedTorrent = magnet(magnetURI)
@@ -38,13 +41,13 @@ class NanoConnectServer extends EventEmitter {
 
         this.btClient.on('error', function (err) {
             // fatal client error!
-            console.log(err.message)
+            errorLog(err.message)
             this.emit('error', err)
         })
         this.btClient.on('update', function (data) {
-            console.log('got an announce response from tracker: ' + data.announce)
-            console.log('number of seeders in the swarm: ' + data.complete)
-            console.log('number of leechers in the swarm: ' + data.incomplete)
+            infoLog('got an announce response from tracker: ' + data.announce)
+            infoLog('number of seeders in the swarm: ' + data.complete)
+            infoLog('number of leechers in the swarm: ' + data.incomplete)
         })
 
         this.rpcHandler = new NanoRPCHandler();
@@ -54,11 +57,8 @@ class NanoConnectServer extends EventEmitter {
     {
         this.btClient.start();
         this.btClient.on('peer', (peer)=> {
-            console.log('-------------------found a peer: ') 
-            console.log(peer._id)
+            infoLog(peer._id + "connected");
             peer.once('connect', ()=>{
-                //connected up
-
                 cb(peer);
             });
         })
@@ -70,18 +70,17 @@ class NanoConnectServer extends EventEmitter {
         this._connectTrackingServer((peer)=>{
             console.log("connected Server");
             peer.once('error', (error)=>{
-                console.log(error);
+                errorLog(error);
+                if(!peer._readableState.destroyed)
+                {
+                    peer.destory();
+                }
+                
             });
             peer.on("data",async data=>{
-                console.log(peer._id)
-                //do validation on data
-                console.log("*************************received data " + data);
-                //send out a message to the server
-                console.log(data.toString())
+                infoLog(data.toString());
                 var data = JSON.parse(data.toString());
                 var returnData  = await this.rpcHandler.send(data.method, data.params)
-                //then respond by sending back the data
-                console.log(returnData)
                 peer.send(returnData.toString());
                
             });
