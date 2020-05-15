@@ -65,6 +65,24 @@ class NanoConnectServer extends EventEmitter {
         })
     }
 
+    onData(data)
+    {
+        infoLog("Received - " + data.toString());
+        if(data.toString() === Consts.ServerMessage)
+        {
+            peer.destroy();
+        }
+        else
+        {
+            var data = JSON.parse(data.toString());
+            this.self.rpcHandler.send(data.method, data.params).then((returnData)=>{
+                infoLog("Sent - " + returnData.toString());
+                this.peer.send(returnData.toString());
+            });
+        }
+    
+    }
+
 
     startClientEvent()
     {
@@ -74,27 +92,22 @@ class NanoConnectServer extends EventEmitter {
             peer.send(Consts.ServerMessage);
 
             peer.once('error', (error)=>{
-                errorLog(error);
-                if(!peer._readableState.destroyed)
-                {
-                    peer.destory();
+
+                try{
+                    errorLog(error);
+                    if(!peer._readableState.destroyed)
+                    {
+                        peer.destory();
+                    }
+                    peer.removeListener('data',this.onData);
                 }
-                
-            });
-            peer.on("data",async data=>{
-                infoLog("Received - " + data.toString());
-                if(data.toString() === Consts.ServerMessage)
+                catch(e)
                 {
-                    peer.destroy();
-                }
-                else
-                {
-                    var data = JSON.parse(data.toString());
-                    var returnData  = await this.rpcHandler.send(data.method, data.params)
-                    infoLog("Sent - " + returnData.toString());
-                    peer.send(returnData.toString());
+                    errorLog("---------failed at cleaning up peer");
+                    errorLog(e);
                 }
             });
+            peer.on("data",this.onData.bind({self:this,peer:peer}));
         });
     }
 }

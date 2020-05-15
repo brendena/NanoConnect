@@ -18,6 +18,7 @@ async function queryDemo() {
         console.log("got here")
         while(true)
         {
+          console.log("sending a message ")
           var  received = await nanoClient.block_count()
           console.log("hello " + received);
           await sleep(1000);
