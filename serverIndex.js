@@ -66,15 +66,31 @@ class NanoConnectServer extends EventEmitter {
                 cb(peer);
             });
         })
+
         //make sure that the server know's that you've completed the torrent
+        var updateTracker = ()=>{
+            this.btClient.update({
+                uploaded: 1,
+                left: 0,
+              })
+
+            setTimeout(()=>{
+                updateTracker();
+            },1000 * 60 * 30); //30 every minute
+        }
+        updateTracker();
         setTimeout(()=>{
             this.btClient.complete();
+            this.btClient.update({
+                uploaded: 1,
+                left: 0,
+              })
         },20000)
     }
 
     onData(data)
     {
-        infoLog("Received - " + data.toString());
+        //infoLog("Received - " + data.toString());
         if(data.toString() === Consts.ServerMessage)
         {
             this.peer.destroy();
@@ -83,7 +99,7 @@ class NanoConnectServer extends EventEmitter {
         {
             var data = JSON.parse(data.toString());
             this.self.rpcHandler.send(data.method, data.params).then((returnData)=>{
-                infoLog("Sent - " + returnData.toString());
+                //infoLog("Sent - " + returnData.toString());
                 this.peer.send(returnData.toString());
             });
         }
