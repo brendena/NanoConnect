@@ -45,7 +45,9 @@ class NanoConnectServer extends EventEmitter {
             errorLog(err.message)
             this.emit('error', err)
         })
-        this.btClient.on('update', function (data) {
+        this.btClient.on('update', (data)=> {
+
+
             infoLog('got an announce response from tracker: ' + data.announce)
             infoLog('number of seeders in the swarm: ' + data.complete)
             infoLog('number of leechers in the swarm: ' + data.incomplete)
@@ -58,11 +60,16 @@ class NanoConnectServer extends EventEmitter {
     {
         this.btClient.start();
         this.btClient.on('peer', (peer)=> {
+            
             infoLog("connected - " + peer._id );
             peer.once('connect', ()=>{
                 cb(peer);
             });
         })
+        //make sure that the server know's that you've completed the torrent
+        setTimeout(()=>{
+            this.btClient.complete();
+        },20000)
     }
 
     onData(data)
@@ -70,7 +77,7 @@ class NanoConnectServer extends EventEmitter {
         infoLog("Received - " + data.toString());
         if(data.toString() === Consts.ServerMessage)
         {
-            peer.destroy();
+            this.peer.destroy();
         }
         else
         {

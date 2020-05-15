@@ -19,23 +19,43 @@ function executeNanoTerminal(nanoClient, arguments) {
 
             argv.reset();
             argv.version()
-                .usage("Nano Connected is a terminal version of the Nano RPC commands")
+                .usage
+                (`Nano Connected is a terminal version of the Nano RPC commands
+[usefull terms] \n
+[accountAddress] - is a 65 character string that start's with nano and it's what you send Nano to.  
+(EX) - nano_1usgjpeyud4zpgop1oi5as6a9pfxnn87n4iss473d177n3fn1pyp96znu67j
+[block] - block is a 64 characters that contains the state of the nano wallet.
+(EX) - F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174
+(help) - use account_history <accountAddress> to get block's.  It will be the hash property.`)
                 .command({
-                    command: "account_balance <accountName>",
+                    command: "getting_started",
+                    desc: "Give you a few instruction to get started using Nano.",
+                    handler: (argv) => {
+                        resolve(`[getting started]\r
+You can create a wallet at nanowallet.io\r
+Once created on the home screen on the right the'll be a Nano address\r
+You can put your nano's address here https://www.freenanofaucet.com/ \r
+to get a some free nano.\r
+Then you can see your account balance with the bellow command. \r
+account_balance <accountAddress> \r\n\n`);
+                    }
+                })
+                .command({
+                    command: "account_balance <accountAddress>",
                     desc: "Returns how many RAW is owned and how many have not yet been received by account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_balance(argv.accountName);
+                        returnPromise = nanoClient.account_balance(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "account_block_count <accountName>",
+                    command: "account_block_count <accountAddress>",
                     desc: "Get number of blocks for a specific account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_block_count(argv.accountName);
+                        returnPromise = nanoClient.account_block_count(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "account_info <accountName> [representative] [weight] [pending]",
+                    command: "account_info <accountAddress> [representative] [weight] [pending]",
                     desc: "Returns frontier, open block, change representative block, balance, last modified timestamp from local database & block count for account",
                     builder: (yargs) => {
                         yargs.positional('representative', {
@@ -53,18 +73,18 @@ function executeNanoTerminal(nanoClient, arguments) {
                         })
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_info(argv.accountName, argv.representative, argv.weight, argv.pending);
+                        returnPromise = nanoClient.account_info(argv.accountAddress, argv.representative, argv.weight, argv.pending);
                     }
                 })
                 .command({
-                    command: "account_get <publicKey>",
-                    desc: "Get account number for the public key.",
+                    command: "account_get <accountAddress>",
+                    desc: "Get the public key for account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_get(argv.publicKey);
+                        returnPromise = nanoClient.account_get(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "account_history <accountName> [count]",
+                    command: "account_history <accountAddress> [count]",
                     desc: "Reports send/receive information for a account.",
                     builder: (yargs) => {
                         yargs.positional('count', {
@@ -74,35 +94,35 @@ function executeNanoTerminal(nanoClient, arguments) {
                         });
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_history(argv.accountName, 1);
+                        returnPromise = nanoClient.account_history(argv.accountAddress, 1);
                     }
                 })
                 .command({
-                    command: "account_key <accountName>",
+                    command: "account_key <accountAddress>",
                     desc: "Get the public key for account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_key(argv.accountName);
+                        returnPromise = nanoClient.account_key(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "account_representative <accountName>",
+                    command: "account_representative <accountAddress>",
                     desc: "Get the public key for account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_representative(argv.accountName);
+                        returnPromise = nanoClient.account_representative(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "account_weight <accountName>",
+                    command: "account_weight <accountAddress>",
                     desc: "Returns the voting weight for account.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_weight(argv.accountName);
+                        returnPromise = nanoClient.account_weight(argv.accountAddress);
                     }
                 })
                 .command({
-                    command: "available_supply <accountName>",
+                    command: "available_supply <accountAddress>",
                     desc: "Returns how many rai are in the public supply.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.available_supply(argv.accountName);
+                        returnPromise = nanoClient.available_supply(argv.accountAddress);
                     }
                 })
                 .command({
@@ -158,7 +178,7 @@ function executeNanoTerminal(nanoClient, arguments) {
                 .command({
                     command: "chain <block> [count]",
                     desc: "Returns a list of block hashes in the account chain starting at block up to count.",
-                    builder:(yargs)=>{
+                    builder: (yargs) => {
                         yargs.positional('representative', {
                             describe: 'Max count of items to return',
                             type: 'number',
@@ -166,13 +186,13 @@ function executeNanoTerminal(nanoClient, arguments) {
                         });
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.chain(argv.block,argv.count);
+                        returnPromise = nanoClient.chain(argv.block, argv.count);
                     }
                 })
                 .command({
-                    command: "frontiers <accountName> [count]",
+                    command: "frontiers <accountAddress> [count]",
                     desc: "Returns a list of pairs of account and block hash representing the head block starting at account up to count.",
-                    builder:(yargs)=>{
+                    builder: (yargs) => {
                         yargs.positional('count', {
                             describe: 'How much items to get from the list.',
                             type: 'number',
@@ -180,24 +200,24 @@ function executeNanoTerminal(nanoClient, arguments) {
                         });
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.frontiers(argv.accountName, argv.count);
+                        returnPromise = nanoClient.frontiers(argv.accountAddress, argv.count);
                     }
                 })
-/*
-//unkown command
-                //doesn't work????
-                .command({
-                    command: "frontiers_count",
-                    desc: "Reports the number of accounts in the ledger.",
-                    handler: (argv) => {
-                        returnPromise = nanoClient.frontiers_count();
-                    }
-                })
-*/
+                /*
+                //unkown command
+                                //doesn't work????
+                                .command({
+                                    command: "frontiers_count",
+                                    desc: "Reports the number of accounts in the ledger.",
+                                    handler: (argv) => {
+                                        returnPromise = nanoClient.frontiers_count();
+                                    }
+                                })
+                */
                 .command({
                     command: "history <block> [count]",
                     desc: "Reports send/receive information for a chain of blocks.",
-                    builder:(yargs)=>{
+                    builder: (yargs) => {
                         yargs.positional('count', {
                             describe: 'How much items to get from the list.',
                             type: 'number',
@@ -253,59 +273,61 @@ function executeNanoTerminal(nanoClient, arguments) {
                         returnPromise = nanoClient.rai_to_raw(argv.sizeRai);
                     }
                 })
-            
-/*
-//currently disabled
-                .command({
-                    command: "ledger <accountName> [count] [representative] [weight] [pending] [sorting]",
-                    desc: "Returns frontier, open block, change representative block, balance, last modified timestamp from local database & block count for account",
-                    builder: (yargs) => {
-                        yargs.positional('count', {
-                            describe: 'Defines from where results are returned',
-                            type: 'number',
-                            default: 1
-                        }).positional('representative', {
-                            describe: 'Additionally returns representative for each account',
-                            type: 'boolean',
-                            default: false
-                        }).positional('weight', {
-                            describe: 'Additionally returns voting weight for each account',
-                            type: 'boolean',
-                            default: false
-                        }).positional('pending', {
-                            describe: 'Additionally returns voting weight for each account',
-                            type: 'boolean',
-                            default: false
-                        }).positional('sorting', {
-                            describe: 'Sort the results by DESC',
-                            type: 'boolean',
-                            default: false
-                        })
-                    },
-                    handler: (argv) => {
-                        returnPromise = nanoClient.ledger(argv.accountName, argv.representative, argv.weight, argv.pending, argv.sorting);
-                    }
-                })
-*/
-/* caused a unkown failer
-                .command({
-                    command: "representatives",
-                    desc: "Returns a list of pairs of representative and its voting weight.",
-                    handle: (argv) => {
-                        returnPromise = nanoClient.representatives(2,1);
-                    }
-                })
-*/
+
+                /*
+                //currently disabled
+                                .command({
+                                    command: "ledger <accountAddress> [count] [representative] [weight] [pending] [sorting]",
+                                    desc: "Returns frontier, open block, change representative block, balance, last modified timestamp from local database & block count for account",
+                                    builder: (yargs) => {
+                                        yargs.positional('count', {
+                                            describe: 'Defines from where results are returned',
+                                            type: 'number',
+                                            default: 1
+                                        }).positional('representative', {
+                                            describe: 'Additionally returns representative for each account',
+                                            type: 'boolean',
+                                            default: false
+                                        }).positional('weight', {
+                                            describe: 'Additionally returns voting weight for each account',
+                                            type: 'boolean',
+                                            default: false
+                                        }).positional('pending', {
+                                            describe: 'Additionally returns voting weight for each account',
+                                            type: 'boolean',
+                                            default: false
+                                        }).positional('sorting', {
+                                            describe: 'Sort the results by DESC',
+                                            type: 'boolean',
+                                            default: false
+                                        })
+                                    },
+                                    handler: (argv) => {
+                                        returnPromise = nanoClient.ledger(argv.accountAddress, argv.representative, argv.weight, argv.pending, argv.sorting);
+                                    }
+                                })
+                */
+                /* caused a unkown failer
+                                .command({
+                                    command: "representatives",
+                                    desc: "Returns a list of pairs of representative and its voting weight.",
+                                    handle: (argv) => {
+                                        returnPromise = nanoClient.representatives(2,1);
+                                    }
+                                })
+                */
                 .help('h')
-                .alias('h', 'help').
-                parse(arguments, (_err, argv, output) => {
+                .alias('h', 'help')
+                .parse(arguments, (_err, argv, output) => {
+                    console.log(argv);
+                    console.log(output)
                     if (output != "") {
                         output = output.split("\n").join("\r\n");
                         output += "\r\n";
                         resolve(output);
                     }
 
-                    console.log(output)
+
                 });
 
             if (returnPromise == null) {
