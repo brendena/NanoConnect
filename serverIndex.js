@@ -5,9 +5,10 @@ var wrtc = require('wrtc')
 var magnetURIDefault = require('./mangnetURI.js');
 var NanoRPCHandler = require('./NanoRPCHandler');
 const { EventEmitter } = require('events')
+var Consts = require('./Consts.js');
 
-const infoLog = require('debug')('nanoServerInfo:index:info');
-const errorLog = require('debug')('nanoServer:index:error');
+const infoLog = require('debug')('NSindexInfo');
+const errorLog = require('debug')('NSindexError');
 
 var generateRandomID = function()
 {
@@ -57,7 +58,7 @@ class NanoConnectServer extends EventEmitter {
     {
         this.btClient.start();
         this.btClient.on('peer', (peer)=> {
-            infoLog(peer._id + "connected");
+            infoLog("connected - " + peer._id );
             peer.once('connect', ()=>{
                 cb(peer);
             });
@@ -68,7 +69,10 @@ class NanoConnectServer extends EventEmitter {
     startClientEvent()
     {
         this._connectTrackingServer((peer)=>{
-            console.log("connected Server");
+            infoLog("connected Server");
+            
+            peer.send(Consts.ServerMessage);
+
             peer.once('error', (error)=>{
                 errorLog(error);
                 if(!peer._readableState.destroyed)
@@ -78,11 +82,18 @@ class NanoConnectServer extends EventEmitter {
                 
             });
             peer.on("data",async data=>{
-                infoLog(data.toString());
-                var data = JSON.parse(data.toString());
-                var returnData  = await this.rpcHandler.send(data.method, data.params)
-                peer.send(returnData.toString());
-               
+                infoLog("Received - " + data.toString());
+                if(data.toString() === Consts.ServerMessage)
+                {
+                    peer.destroy();
+                }
+                else
+                {
+                    var data = JSON.parse(data.toString());
+                    var returnData  = await this.rpcHandler.send(data.method, data.params)
+                    infoLog("Sent - " + returnData.toString());
+                    peer.send(returnData.toString());
+                }
             });
         });
     }

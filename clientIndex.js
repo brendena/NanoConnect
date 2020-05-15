@@ -4,9 +4,10 @@ var wrtc = require('wrtc')
 var magnetURIDefault = require('./mangnetURI.js');
 const { EventEmitter } = require('events')
 const debug = require('debug');
+const Consts = require('Consts')
 
-const logInfo = require('debug')('nanoClient:index:info');
-const errorLog = require('debug')('nanoClient:index:error');
+const logInfo = require('debug')('NSIndexInfo');
+const errorLog = require('debug')('NSIndexError');
 
 
 //need to manage multiple peer trying to conenct
@@ -142,8 +143,11 @@ class NanoConnectBaseClient extends EventEmitter {
 
             this.peer.send(JSON.stringify(sendingJsonMessage));
             this.peer.once('data', (data) => {
-                logInfo(data);
-                return resolve(data);
+                logInfo(data.toString());
+                if(data.toString() != Consts.ServerMessage)
+                {
+                    return resolve(data);
+                }
             });
 
         });

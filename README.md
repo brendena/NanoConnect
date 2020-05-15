@@ -7,8 +7,8 @@ bittorrent-tracker
 
 
 ### Logs
-Turn on with node DEBUG=NameDebugger:tag
-* nanoClient:index:error
-* nanoClient:index:info
-* nanoServer:index:error
-* nanoServer:index:info
+Turn on with node logging with DEBUG=NSindexInfo,NSindexError node ./examples/serverExample.js
+* NSIndexInfo #stands for NanoClientIndexInfo
+* NSIndexError
+* NSindexInfo  
+* NSindexError
