@@ -37,7 +37,7 @@ class NanoConnectServer extends EventEmitter {
                     uploaded: 10,
                     downloaded: 0,
                     left: 0,
-                    numwant: 1  //since your not downloading anything keep this number low, else it will spawn a lot of sockets that will keep dying
+                    numwant: 0  //since your not downloading anything keep this number low, else it will spawn a lot of sockets that will keep dying
                 }
             },
             infoHash: parsedTorrent.infoHash, // hex string or Buffer
