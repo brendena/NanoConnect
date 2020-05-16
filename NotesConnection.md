@@ -17,5 +17,9 @@ bittorrent-tracker:websocket-tracker reconnecting socket in 149328 ms +2m
 
 
 
+
+
 NSindexError BT warning - Connection error: Ice connection failed. +0ms
 NSindexError BT error - Connection error: Ice connection failed. +0ms
+
+For some reason it will just keep having a ice failer untill it dies.

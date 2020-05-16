@@ -50,16 +50,16 @@ class NanoConnectServer extends EventEmitter {
 
         this.btClient = new Client(requiredOpts)
 
-        this.btClient.on('error', function (err) {
+        this.btClient.on('error', (err)=> {
             // fatal client error!
-            //errorLog('BT error - ' + err.message)
-            this.emit('error', err)
+            errorLog('BT error - ' + err.message)
+            //this.emit('error', err)
         })
 
-        this.btClient.on('warning', function (err) {
+        this.btClient.on('warning', (err)=> {
             // fatal client error!
             errorLog('BT warning - ' + err.message)
-            this.emit('error', err)
+            //this.emit('error', err)
         })
         this.btClient.on('update', (data)=> {
 
@@ -136,9 +136,9 @@ class NanoConnectServer extends EventEmitter {
                     errorLog(error);
                     if(!peer._readableState.destroyed)
                     {
-                        peer.destory();
+                        //peer.destory();
                     }
-                    peer.removeListener('data',this.onData);
+                    //peer.removeListener('data',this.onData);
                 }
                 catch(e)
                 {
