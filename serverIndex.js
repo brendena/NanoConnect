@@ -52,7 +52,13 @@ class NanoConnectServer extends EventEmitter {
 
         this.btClient.on('error', function (err) {
             // fatal client error!
-            errorLog(err.message)
+            //errorLog('BT error - ' + err.message)
+            this.emit('error', err)
+        })
+
+        this.btClient.on('warning', function (err) {
+            // fatal client error!
+            errorLog('BT warning - ' + err.message)
             this.emit('error', err)
         })
         this.btClient.on('update', (data)=> {
@@ -86,7 +92,7 @@ class NanoConnectServer extends EventEmitter {
 
             setTimeout(()=>{
                 updateTracker();
-            },1000 * 60 * 30); //30 every minute
+            },1000 * 60); //1 every minute
         }
         updateTracker();
         setTimeout(()=>{
