@@ -93,9 +93,11 @@ class NanoConnectBaseClient extends EventEmitter {
                         }
                         this.peer = null;
                     });
-    
+                    this.btClient.stop();
+                    this.btClient.destroy();
+                    delete this.btClient;
+                    this.btClient = null;
                 });
-                this.btClient.stop();
             });
         }
 

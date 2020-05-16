@@ -30,6 +30,16 @@ class NanoConnectServer extends EventEmitter {
         var parsedTorrent = magnet(magnetURI)
 
         var requiredOpts = {
+            getAnnounceOpts: function () {
+                // Provide a callback that will be called whenever announce() is called
+                // internally (on timer), or by the user
+                return {
+                    uploaded: 10,
+                    downloaded: 0,
+                    left: 0,
+                    numwant: 1  //since your not downloading anything keep this number low, else it will spawn a lot of sockets that will keep dying
+                }
+            },
             infoHash: parsedTorrent.infoHash, // hex string or Buffer
             peerId:   Buffer.alloc(20, generateRandomID()), // hex string or Buffer
             announce: parsedTorrent.announce,
