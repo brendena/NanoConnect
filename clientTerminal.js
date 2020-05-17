@@ -119,7 +119,7 @@ account_balance <accountAddress> \r\n\n`);
                     }
                 })
                 .command({
-                    command: "available_supply <accountAddress>",
+                    command: "available_supply",
                     desc: "Returns how many rai are in the public supply.",
                     handler: (argv) => {
                         returnPromise = nanoClient.available_supply(argv.accountAddress);

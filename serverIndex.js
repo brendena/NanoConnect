@@ -6,6 +6,8 @@ var magnetURIDefault = require('./mangnetURI.js');
 var NanoRPCHandler = require('./NanoRPCHandler');
 const { EventEmitter } = require('events')
 var Consts = require('./Consts.js');
+var checkValidCommand = require('./checkValidRPCCommand')
+
 
 const infoLog = require('debug')('NSindexInfo');
 const errorLog = require('debug')('NSindexError');
@@ -83,7 +85,7 @@ class NanoConnectServer extends EventEmitter {
             });
         })
 
-        //make sure that the server know's that you've completed the torrent
+        //make sure that the server stays connected
         var updateTracker = ()=>{
             this.btClient.update({
                 uploaded: 1,
@@ -95,12 +97,10 @@ class NanoConnectServer extends EventEmitter {
             },1000 * 60); //1 every minute
         }
         updateTracker();
+
+        //make sure that the server know's your've completed 
         setTimeout(()=>{
             this.btClient.complete();
-            this.btClient.update({
-                uploaded: 1,
-                left: 0,
-              })
         },20000)
     }
 
@@ -113,11 +113,17 @@ class NanoConnectServer extends EventEmitter {
         }
         else
         {
-            var data = JSON.parse(data.toString());
-            this.self.rpcHandler.send(data.method, data.params).then((returnData)=>{
-                //infoLog("Sent - " + returnData.toString());
-                this.peer.send(returnData.toString());
-            });
+            try{
+                var data = checkValidCommand(data)
+                this.self.rpcHandler.send(data.method, data.params).then((returnData)=>{
+                    //infoLog("Sent - " + returnData.toString());
+                    this.peer.send(returnData.toString());
+                });
+            }
+            catch(error){
+                console.log(error)
+                this.peer.send(error.toString());
+            }
         }
     
     }
@@ -136,9 +142,9 @@ class NanoConnectServer extends EventEmitter {
                     errorLog(error);
                     if(!peer._readableState.destroyed)
                     {
-                        //peer.destory();
+                        peer.destory();
                     }
-                    //peer.removeListener('data',this.onData);
+                    peer.removeListener('data',this.onData);
                 }
                 catch(e)
                 {

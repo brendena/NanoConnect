@@ -20,7 +20,10 @@ async function queryDemo() {
         {
           console.log("sending a message ")
           var  received = await nanoClient.block_count()
-          //console.log("hello " + received);
+
+          //send a failing message
+          //var  received = await nanoClient._send("block_count",{"test":"sdfsdf"})
+          console.log("hello " + received);
           console.log("received message")
           await sleep(1000);
         }

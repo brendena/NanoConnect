@@ -148,7 +148,6 @@ class NanoConnectBaseClient extends EventEmitter {
             }
 
             this.peer.send(JSON.stringify(sendingJsonMessage));
-
             this.peer.once('data', (data) => {
                 if (data.toString() == Consts.ServerMessage) {
                     infoLog("received server message");
