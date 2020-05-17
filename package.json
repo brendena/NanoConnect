@@ -1,10 +1,10 @@
 {
   "name": "nanoconnect",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "buildClientBrowser": "webpack --config webpack.js"
   },
   "repository": {
     "type": "git",
@@ -17,15 +17,24 @@
   },
   "homepage": "https://github.com/brendena/NanoConnect#readme",
   "dependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
     "bittorrent-tracker": "^9.14.5",
     "buffer-json": "^2.0.0",
     "debug": "^4.1.1",
     "install": "^0.13.0",
     "magnet-uri": "^5.2.4",
+    "save-dev": "0.0.1-security",
     "wrtc": "^0.4.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.9.6",
+    "babel-loader": "^8.1.0",
     "gh-pages": "^2.2.0",
+    "stack": "^0.1.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
     "yargs": "^15.3.1"
   }
 }

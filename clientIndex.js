@@ -1,9 +1,7 @@
 var Client = require('bittorrent-tracker')
 var magnet = require('magnet-uri')
-var wrtc = require('wrtc')
 var magnetURIDefault = require('./mangnetURI.js');
 const { EventEmitter } = require('events')
-const debug = require('debug');
 const Consts = require('./Consts')
 
 const infoLog = require('debug')('NSIndexInfo');
@@ -13,12 +11,16 @@ const errorLog = require('debug')('NSIndexError');
 //need to manage multiple peer trying to conenct
 
 // 
+
 class NanoConnectBaseClient extends EventEmitter {
-    constructor(magnetURI = magnetURIDefault, opts = {}) {
+    constructor(opts = {}) {
         super();
-
-
-        var parsedTorrent = magnet(magnetURI)
+        opts.magnetURI = magnetURIDefault;
+        if(opts.magnetURI != undefined)
+        {
+            opts.magnetURI = opts.magnetURI;
+        }
+        var parsedTorrent = magnet(opts.magnetURI)
 
         this.requiredOpts = {
             getAnnounceOpts: function () {
@@ -42,6 +44,7 @@ class NanoConnectBaseClient extends EventEmitter {
         if (opts.port != undefined) {
             this.requiredOpts.port = opts.port;
         }
+
 
         this.btClient = null;
         this.peer = null;

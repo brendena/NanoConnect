@@ -1,10 +1,9 @@
-var magnetURI = require('../mangnetURI.js');
 var NanoConnectClient = require('../clientMessagesIndex')
 var wrtc = require('wrtc')
 
 
 
-var nanoClient = new NanoConnectClient(magnetURI, {port:6881,wrtc:wrtc});
+var nanoClient = new NanoConnectClient({port:6881,wrtc:wrtc});
 nanoClient.connect();
 
 function sleep(ms) {
