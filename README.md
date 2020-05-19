@@ -1,8 +1,8 @@
-# Nano Connected
+# Nano Connect
 
 ## What is it
 
-Nano Connected is a relay server that allows you to use the RPC server from a browser or from a terminal.  
+Nano Connect is a relay server that allows you to use the RPC server from a browser or from a terminal without any costs.  
 
 
 
@@ -14,7 +14,7 @@ It works by people running a Nano Node and a Nano Connect server.  The Nano Conn
 
 ## Goal 
 
-To make accessing a Nano Node completely free by allowing people to run a Nano client that can have a intermediate connection. 
+To make accessing a Nano Node completely free by allowing people to run a Nano client that can have a intermediate connection. Think folding@home but for Nano.
 
 ## Getting started
 ### 1. Getting a node started
