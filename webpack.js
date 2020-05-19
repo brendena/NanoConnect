@@ -11,7 +11,7 @@ module.exports = {
     filename: 'NanoConnectClient.js',
   },
   mode: "production",// development //production
-  devtool:"source-map",
+  //devtool:"source-map",
 	optimization: {
 		minimize: false
 	},

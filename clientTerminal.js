@@ -78,7 +78,7 @@ account_balance <accountAddress> \r\n\n`);
                 })
                 .command({
                     command: "account_get <accountAddress>",
-                    desc: "Get the public key for account.",
+                    desc: "Get account address.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_get(argv.accountAddress);
                     }
@@ -106,7 +106,7 @@ account_balance <accountAddress> \r\n\n`);
                 })
                 .command({
                     command: "account_representative <accountAddress>",
-                    desc: "Get the public key for account.",
+                    desc: "Returns the representative for account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_representative(argv.accountAddress);
                     }
@@ -136,24 +136,46 @@ account_balance <accountAddress> \r\n\n`);
                 .command({
                     command: "blocks <blocks>",
                     desc: "Retrieves a json representations of blocks.",
+                    builder: (yargs) => {
+                        yargs.positional('blocks', {
+                            describe: 'A list of block hashes',
+                            type: 'array',
+                            default: []
+                        })
+                    },
                     handler: (argv) => {
-                        console.log("*************************************---------")
-                        console.log(argv.blocks);
+                        //split array
+                        argv.blocks = argv.blocks.replace("[","");
+                        argv.blocks = argv.blocks.replace("]","");
+                        argv.blocks = argv.blocks.split(",")
+
                         returnPromise = nanoClient.blocks(argv.blocks);
                     }
                 })
+                //.example("blocks","blocks [\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\",\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\"]")
                 //lots of options
                 .command({
-                    command: "block_info <block> [source] [pending]",
+                    command: "blocks_info <blocks> [source] [pending]",
                     desc: "Retrieves a json representations of blocks with transaction amount & block account.",
                     builder: (yargs) => {
+                        
+                        yargs.positional('blocks', {
+                            describe: 'A list of block hashes',
+                            type: 'array',
+                            default: []
+                        })
                         yargs.default('source', false);
                         yargs.default('pending', false);
+                        
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.blocks_info(argv.block, argv.source, argv.pending);
+                        argv.blocks = argv.blocks.replace("[","");
+                        argv.blocks = argv.blocks.replace("]","");
+                        argv.blocks = argv.blocks.split(",")
+                        returnPromise = nanoClient.blocks_info(argv.blocks, argv.source, argv.pending);
                     }
                 })
+                .example("blocks_info","blocks_info [\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\",\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\"] true false")
                 .command({
                     command: "block_account <block>",
                     desc: "Returns the account containing block.",
@@ -163,14 +185,14 @@ account_balance <accountAddress> \r\n\n`);
                 })
                 .command({
                     command: "block_count",
-                    desc: "Reports the number of blocks in the ledger.",
+                    desc: "Reports the number of blocks in the ledger and unchecked synchronizing blocks.",
                     handler: () => {
                         returnPromise = nanoClient.block_count();
                     }
                 })
                 .command({
                     command: "block_count_type",
-                    desc: "Reports the number of blocks in the ledger by type.",
+                    desc: "Reports the number of blocks in the ledger by type (send, receive, open, change).",
                     handler: () => {
                         returnPromise = nanoClient.block_count_type();
                     }
@@ -337,7 +359,6 @@ account_balance <accountAddress> \r\n\n`);
                 returnPromise.then((message) => {
                     if (message != "") {
                         var messageString = message.toString();
-                        console.log(messageString)
                         messageString = messageString.split("\n").join("\r\n");
                         messageString += "\r\n";
                         resolve(messageString);

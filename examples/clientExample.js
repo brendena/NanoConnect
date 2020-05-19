@@ -18,7 +18,8 @@ async function queryDemo() {
         while(true)
         {
           console.log("sending a message ")
-          var  received = await nanoClient.block_count()
+          var  received = await nanoClient.blocks(["F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174","F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174"]);
+          //var  received = await nanoClient.blocks("[\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\"]");
 
           //send a failing message
           //var  received = await nanoClient._send("block_count",{"test":"sdfsdf"})

@@ -4,37 +4,70 @@
     <script src="NanoConnectClient.js"></script>
 </head>
 <body>
-<p>Test Nano Connect Client</p>
+<p>Nano Connect Basic Example</p>
+
+<p id="serverConnectionIndicator">connecting to server</p>
+
+<p id="balance">Balance (Nano) - </p>
+
+
+<p id="blockCount">Blocks in person chain - </p>
+
+<p id="history">Last block - </p>
 
 <script>
+    var displayConnectionTimer =  setInterval(function(){
+        var serverConnectionIndicator = document.getElementById("serverConnectionIndicator");
+        serverConnectionIndicator.innerHTML += " . "; 
+    },200);
+
+
+    var nodeAddress = "nano_1usgjpeyud4zpgop1oi5as6a9pfxnn87n4iss473d177n3fn1pyp96znu67j"
+
     const NanoConnectClient = window.NanoConnectClient;
     var nanoClient = new NanoConnectClient();
-    nanoClient.connect();
 
-    function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    //start the connection in the background
+    nanoClient.connect(); 
 
     async function queryDemo() {
         try {
         
             await nanoClient.waitForConnection(); 
-            console.log("got here")
-            while(true)
-            {
-                console.log("sending a message ")
-                var  received = await nanoClient.block_count()
+            console.log("connected to a nano server");
+            clearInterval(displayConnectionTimer);
 
-                //send a failing message
-                //var  received = await nanoClient._send("block_count",{"test":"sdfsdf"})
-                console.log("hello " + received);
-                console.log("received message")
-                await sleep(1000);
+
+            //balance
+            var message = await nanoClient.account_balance(nodeAddress);
+            var balanceRawNano = JSON.parse(message.toString());
+            var balanceNano = Number(balanceRawNano["balance"]) / 1000000000000000000000000;
+            document.getElementById("balance").innerHTML += String(balanceNano.toPrecision(5)); 
+
+            //block count
+            var message = await nanoClient.account_block_count(nodeAddress);
+            var blockCount = JSON.parse(message.toString());
+            document.getElementById("blockCount").innerHTML += blockCount["block_count"]; 
+
+            //account history
+            if(Number(blockCount["block_count"]) > 0)
+            {
+                var message = await nanoClient.account_history(nodeAddress);
+                var history = JSON.parse(message.toString());
+                var lastHash = history["history"][0]["hash"];
+                console.log(history)
+                document.getElementById("history").innerHTML += lastHash; 
+            }
+            else
+            {
+                document.getElementById("history").innerHTML += "no history yet"; 
             }
             
+
+
         } catch (error) {
-        console.error("\nError: " + error.message);
-        return
+            console.error("\nError: " + error.message);
+            return
         }
     
     }
@@ -45,3 +78,8 @@
 
 </body>
 </html>
+
+<!-- 
+https://nanocrawler.cc/explorer/block/F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174
+
+-->
