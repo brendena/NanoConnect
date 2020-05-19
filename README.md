@@ -9,7 +9,7 @@ Nano Connected is a relay server that allows you to use the RPC server from a br
 ## How it works
 It works by people running a Nano Node and a Nano Connect server.  The Nano Connect server is listening on many WebRTC ports and is discovered by seeding itself on the Bittorrent network.  People find your Nano Server by connecting to the Bittorent tracker and asking for a peer.  Once you've connected to a peer(A Nano Connect Server) you disconnect from the bittorent tracker and you then send your RPC commands to the Nano Connect Server and it will relay them to the Nano Node. 
 
-![How Nano Connect works](./images/HowItWorks.png)
+![How Nano Connect works](./images/HowItWorks.svg)
 
 
 ## Goal 
