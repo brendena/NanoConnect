@@ -176,9 +176,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="491.27546"
-     inkscape:cy="464.80145"
+     inkscape:zoom="0.7"
+     inkscape:cx="437.29112"
+     inkscape:cy="367.98636"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -212,12 +212,12 @@
      id="layer3"
      inkscape:label="background">
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:1.00000001, 2.00000002999999982;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.07101369;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:1.07101375, 2.14202751;stroke-dashoffset:0;stroke-opacity:1"
        id="rect7018"
-       width="349.62799"
-       height="229.80951"
-       x="-17.764881"
-       y="-9.3988085" />
+       width="362.38593"
+       height="254.32729"
+       x="-31.761024"
+       y="-33.417561" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot868"
@@ -244,7 +244,9 @@
        style="font-style:normal;font-weight:normal;font-size:7.30257845px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.18256445"
        x="189.2634"
        y="66.20816"
-       id="text878-3"><tspan
+       id="text878-3"
+       inkscape:export-xdpi="70.042427"
+       inkscape:export-ydpi="70.042427"><tspan
          sodipodi:role="line"
          id="tspan876-6"
          x="189.2634"
@@ -420,5 +422,16 @@
        id="path847-1-0-8"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.26655054px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15666376"
+       x="252.6956"
+       y="209.77209"
+       id="text843-7"><tspan
+         sodipodi:role="line"
+         x="252.6956"
+         y="209.77209"
+         style="stroke-width:0.15666376"
+         id="tspan845-3">Nano Node</tspan></text>
   </g>
 </svg>
