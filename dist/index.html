@@ -40,20 +40,20 @@
 
             //balance
             var message = await nanoClient.account_balance(nodeAddress);
-            var balanceRawNano = JSON.parse(message.toString());
-            var balanceNano = Number(balanceRawNano["balance"]) / 1000000000000000000000000;
+            var balanceMessage = window.NanoParseMessage(message, "account_balance")
+            var balanceNano = balanceMessage["balance"] / 1000000000000000000000000;
             document.getElementById("balance").innerHTML += String(balanceNano.toPrecision(5)); 
 
             //block count
             var message = await nanoClient.account_block_count(nodeAddress);
-            var blockCount = JSON.parse(message.toString());
+            var blockCount = window.NanoParseMessage(message, "account_block_count")
             document.getElementById("blockCount").innerHTML += blockCount["block_count"]; 
 
             //account history
-            if(Number(blockCount["block_count"]) > 0)
+            if(blockCount["block_count"] > 0)
             {
                 var message = await nanoClient.account_history(nodeAddress);
-                var history = JSON.parse(message.toString());
+                var history = window.NanoParseMessage(message, "account_history")
                 var lastHash = history["history"][0]["hash"];
                 console.log(history)
                 document.getElementById("history").innerHTML += lastHash; 

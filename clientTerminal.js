@@ -77,10 +77,10 @@ account_balance <accountAddress> \r\n\n`);
                     }
                 })
                 .command({
-                    command: "account_get <accountAddress>",
+                    command: "account_get <publicKey>",
                     desc: "Get account address.",
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_get(argv.accountAddress);
+                        returnPromise = nanoClient.account_get(argv.publicKey);
                     }
                 })
                 .command({
@@ -94,7 +94,7 @@ account_balance <accountAddress> \r\n\n`);
                         });
                     },
                     handler: (argv) => {
-                        returnPromise = nanoClient.account_history(argv.accountAddress, 1);
+                        returnPromise = nanoClient.account_history(argv.accountAddress, argv.count);
                     }
                 })
                 .command({
