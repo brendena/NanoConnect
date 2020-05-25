@@ -14,7 +14,7 @@ async function terminalLoop(arguments) {
             await nanoClient.waitForConnection();
         }
         var returnString = await executeNanoTerminal(nanoClient,arguments);
-        console.log("got back" + returnString);
+        //console.log("got back" + returnString);
 
 
 

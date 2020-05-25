@@ -8,34 +8,34 @@ const infoLog = require('debug')('NSIndexInfo');
 const errorLog = require('debug')('NSIndexError');
 
 
-//need to manage multiple peer trying to conenct
 
-// 
+
 
 class NanoConnectBaseClient extends EventEmitter {
     constructor(opts = {}) {
         super();
-        opts.magnetURI = magnetURIDefault;
-        if(opts.magnetURI != undefined)
+        
+        if(opts.magnetURI == undefined)
         {
-            opts.magnetURI = opts.magnetURI;
+            opts.magnetURI = magnetURIDefault[Math.floor(Math.random() * magnetURIDefault.length)];;
         }
         var parsedTorrent = magnet(opts.magnetURI)
-
+        
         this.requiredOpts = {
             getAnnounceOpts: function () {
                 // Provide a callback that will be called whenever announce() is called
                 // internally (on timer), or by the user
                 return {
-                    uploaded: 0,
-                    downloaded: 0,
-                    left: 10,
+                    uploaded: 1,
+                    downloaded: 1,
+                    left: 1,
                     numwant: 1
                 }
             },
             infoHash: parsedTorrent.infoHash, // hex string or Buffer
-            peerId: Buffer.alloc(20, 'NanoClient__________'), // hex string or Buffer
+            peerId: Buffer.alloc(20, "NANO_CLIENT_________"),
             announce: parsedTorrent.announce
+            
         }
 
         if (opts.wrtc != undefined) {
@@ -70,12 +70,14 @@ class NanoConnectBaseClient extends EventEmitter {
                 infoLog('number of leechers in the swarm: ' + data.incomplete)
             })
             this.btClient.start();
-            this.btClient.update();
             this.btClient.once('peer', (peer) => {
-    
+                console.log("------------------semi - " + peer._id );
     
     
                 peer.once('connect', () => {
+                    console.log("------------------connected - " + peer._id );
+
+
                     infoLog(peer._id + " peerConnected")
                     this.emit('connected');
                     this.peer = peer;
@@ -132,7 +134,7 @@ class NanoConnectBaseClient extends EventEmitter {
                     loggingInLoop();
 
                 }
-            }, 6000);
+            }, Math.floor((Math.random() * 1000) + 2000));
         }
         loggingInLoop();
     }
@@ -152,6 +154,7 @@ class NanoConnectBaseClient extends EventEmitter {
 
             this.peer.send(JSON.stringify(sendingJsonMessage));
             this.peer.once('data', (data) => {
+                console.log("received data" + data)
                 if (data.toString() == Consts.ServerMessage) {
                     infoLog("received server message");
                     //listen for the next packet

@@ -9,7 +9,7 @@ var loopThroughKeys = function (loopingKeyObject, cb) {
 
 var parseNanoMessage = function (messageBuffer, messageType) {
     var message = JSON.parse(messageBuffer.toString());
-    console.log("got here")
+    
     if (messageType == "account_balance") {
         message["balance"] = parseInt(message["balance"]);
         message["pending"] = parseInt(message["pending"]);
@@ -43,6 +43,17 @@ var parseNanoMessage = function (messageBuffer, messageType) {
             return jsonItem;
         });
     }
+    else if (messageType == "blocks_info") {
+        loopThroughKeys(message.blocks, function (item) {
+            
+            item["balance"] = parseInt(item["balance"])
+            item["amount"] = parseInt(item["amount"])
+            item["contents"] = JSON.parse(item["contents"]);
+            item["contents"]["previous"] = parseInt(item["contents"]["previous"]);
+            item["contents"]["balance"] = parseInt(item["contents"]["balance"]);
+            return item;
+        });
+    }
     else if (messageType == "block_count") {
         message["count"] = parseInt(message["count"]);
         message["unchecked"] = parseInt(message["unchecked"]);
@@ -66,7 +77,7 @@ var parseNanoMessage = function (messageBuffer, messageType) {
     
         message["amount"] = parseInt(message["amount"]);
     }
-    console.log(JSON.stringify(message, null, 4));
+    
 
     return message;
 }

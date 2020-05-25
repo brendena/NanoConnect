@@ -1,9 +1,7 @@
 
-
 var yargs = require('yargs')
-
-
 var argv = yargs.locale("en")
+var NanoParseMessage  = require('./clientParseMessage')
 
 
 
@@ -16,6 +14,7 @@ function executeNanoTerminal(nanoClient, arguments) {
             //var  received = await nanoClient.block_count()
             //console.log("hello " + received);
             var returnPromise = null;
+            var messageType = "";
 
             argv.reset();
             argv.version()
@@ -45,6 +44,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Returns how many RAW is owned and how many have not yet been received by account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_balance(argv.accountAddress);
+                        messageType = "account_balance";
                     }
                 })
                 .command({
@@ -52,6 +52,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Get number of blocks for a specific account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_block_count(argv.accountAddress);
+                        messageType = "account_block_count";
                     }
                 })
                 .command({
@@ -74,6 +75,7 @@ account_balance <accountAddress> \r\n\n`);
                     },
                     handler: (argv) => {
                         returnPromise = nanoClient.account_info(argv.accountAddress, argv.representative, argv.weight, argv.pending);
+                        messageType = "account_info";
                     }
                 })
                 .command({
@@ -81,6 +83,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Get account address.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_get(argv.publicKey);
+                        messageType = "account_get";
                     }
                 })
                 .command({
@@ -95,6 +98,7 @@ account_balance <accountAddress> \r\n\n`);
                     },
                     handler: (argv) => {
                         returnPromise = nanoClient.account_history(argv.accountAddress, argv.count);
+                        messageType = "account_history";
                     }
                 })
                 .command({
@@ -102,6 +106,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Get the public key for account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_key(argv.accountAddress);
+                        messageType = "account_key";
                     }
                 })
                 .command({
@@ -109,6 +114,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Returns the representative for account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_representative(argv.accountAddress);
+                        messageType = "account_representative";
                     }
                 })
                 .command({
@@ -116,6 +122,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Returns the voting weight for account.",
                     handler: (argv) => {
                         returnPromise = nanoClient.account_weight(argv.accountAddress);
+                        messageType = "account_weight";
                     }
                 })
                 .command({
@@ -123,6 +130,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Returns how many rai are in the public supply.",
                     handler: (argv) => {
                         returnPromise = nanoClient.available_supply(argv.accountAddress);
+                        messageType = "available_supply";
                     }
                 })
                 .command({
@@ -130,6 +138,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Retrieves a json representation of block.",
                     handler: (argv) => {
                         returnPromise = nanoClient.block(argv.block);
+                        messageType = "block";
                     }
                 })
                 //going to need verificaiton a list of blocks
@@ -150,9 +159,10 @@ account_balance <accountAddress> \r\n\n`);
                         argv.blocks = argv.blocks.split(",")
 
                         returnPromise = nanoClient.blocks(argv.blocks);
+                        messageType = "blocks";
                     }
                 })
-                //.example("blocks","blocks [\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\",\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\"]")
+                .example("blocks","blocks [F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174]")
                 //lots of options
                 .command({
                     command: "blocks_info <blocks> [source] [pending]",
@@ -173,14 +183,16 @@ account_balance <accountAddress> \r\n\n`);
                         argv.blocks = argv.blocks.replace("]","");
                         argv.blocks = argv.blocks.split(",")
                         returnPromise = nanoClient.blocks_info(argv.blocks, argv.source, argv.pending);
+                        messageType = "blocks_info";
                     }
                 })
-                .example("blocks_info","blocks_info [\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\",\"F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174\"] true false")
+                .example("blocks_info","blocks_info [F11285DAFFEDCC1F375C1882FB0B5B453EADCCD19C31B9A443564680C8705174] true false")
                 .command({
                     command: "block_account <block>",
                     desc: "Returns the account containing block.",
                     handler: (argv) => {
                         returnPromise = nanoClient.block_account(argv.block);
+                        messageType = "block_account";
                     }
                 })
                 .command({
@@ -188,6 +200,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Reports the number of blocks in the ledger and unchecked synchronizing blocks.",
                     handler: () => {
                         returnPromise = nanoClient.block_count();
+                        messageType = "block_count";
                     }
                 })
                 .command({
@@ -195,6 +208,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Reports the number of blocks in the ledger by type (send, receive, open, change).",
                     handler: () => {
                         returnPromise = nanoClient.block_count_type();
+                        messageType = "block_count_type";
                     }
                 })
                 .command({
@@ -209,6 +223,7 @@ account_balance <accountAddress> \r\n\n`);
                     },
                     handler: (argv) => {
                         returnPromise = nanoClient.chain(argv.block, argv.count);
+                        messageType = "chain";
                     }
                 })
                 .command({
@@ -223,6 +238,7 @@ account_balance <accountAddress> \r\n\n`);
                     },
                     handler: (argv) => {
                         returnPromise = nanoClient.frontiers(argv.accountAddress, argv.count);
+                        messageType = "frontiers";
                     }
                 })
                 /*
@@ -247,8 +263,8 @@ account_balance <accountAddress> \r\n\n`);
                         });
                     },
                     handler: (argv) => {
-                        console.log()
                         returnPromise = nanoClient.history(argv.block, argv.count);
+                        messageType = "history";
                     }
                 })
                 .command({
@@ -256,6 +272,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Divide a raw amount down by the Mrai ratio.",
                     handler: (argv) => {
                         returnPromise = nanoClient.mrai_from_raw(argv.sizeRaw);
+                        messageType = "mrai_from_raw";
                     }
                 })
                 .command({
@@ -263,6 +280,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Multiply an Mrai amount by the Mrai ratio.",
                     handler: (argv) => {
                         returnPromise = nanoClient.mrai_to_raw(argv.sizeMrai);
+                        messageType = "mrai_to_raw";
                     }
                 })
                 .command({
@@ -270,6 +288,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Divide a raw amount down by the krai ratio.",
                     handler: (argv) => {
                         returnPromise = nanoClient.krai_from_raw(argv.sizeRaw);
+                        messageType = "krai_from_raw";
 
                     }
                 })
@@ -278,6 +297,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Multiply an krai amount by the krai ratio.",
                     handler: (argv) => {
                         returnPromise = nanoClient.krai_to_raw(argv.sizeKrai);
+                        messageType = "krai_to_raw";
                     }
                 })
                 .command({
@@ -285,6 +305,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Divide a raw amount down by the rai ratio.",
                     handler: (argv) => {
                         returnPromise = nanoClient.rai_from_raw(argv.sizeRaw);
+                        messageType = "rai_from_raw";
 
                     }
                 })
@@ -293,6 +314,7 @@ account_balance <accountAddress> \r\n\n`);
                     desc: "Multiply an rai amount by the rai ratio.",
                     handle: (argv) => {
                         returnPromise = nanoClient.rai_to_raw(argv.sizeRai);
+                        messageType = "rai_to_raw";
                     }
                 })
 
@@ -358,10 +380,19 @@ account_balance <accountAddress> \r\n\n`);
             else {
                 returnPromise.then((message) => {
                     if (message != "") {
-                        var messageString = message.toString();
-                        messageString = messageString.split("\n").join("\r\n");
-                        messageString += "\r\n";
-                        resolve(messageString);
+                        try{
+                            console.log("---------------")
+                            var messageJson   = NanoParseMessage(message,messageType);
+                            var messageString =  JSON.stringify(messageJson, null, 4)
+                            messageString = messageString.split("\n").join("\r\n");
+                            messageString += "\r\n";
+                            resolve(messageString);
+                        }
+                        catch(error){
+                            console.log(error)
+                            reject("ERROR: - " + message.toString());
+                        }
+
                     }
                     else {
                         reject("ERROR:no message")

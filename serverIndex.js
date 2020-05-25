@@ -26,10 +26,14 @@ var generateRandomID = function()
 
 // 
 class NanoConnectServer extends EventEmitter {
-    constructor (magnetURI = magnetURIDefault, opts = {}) {
+    constructor (opts = {}) {
         super()
-
-        var parsedTorrent = magnet(magnetURI)
+        
+        if(opts.magnetURI == undefined)
+        {
+            opts.magnetURI = magnetURIDefault[Math.floor(Math.random() * magnetURIDefault.length)];
+        }
+        var parsedTorrent = magnet(opts.magnetURI)
 
         var requiredOpts = {
             getAnnounceOpts: function () {
