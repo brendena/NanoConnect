@@ -53,6 +53,7 @@ class NanoConnectBaseClient extends EventEmitter {
     connectBTClient() {
         if (this.btClient != null) {
             errorLog("took longer then 5 seconds to connect.  Going to reset connectoin");
+            console.log("TOOK a long time")
             this.btClient.update();
         }
         else{
@@ -71,11 +72,11 @@ class NanoConnectBaseClient extends EventEmitter {
             })
             this.btClient.start();
             this.btClient.once('peer', (peer) => {
-                console.log("------------------semi - " + peer._id );
+                infoLog("------------------semi - " + peer._id );
     
     
                 peer.once('connect', () => {
-                    console.log("------------------connected - " + peer._id );
+                    infoLog("------------------connected - " + peer._id );
 
 
                     infoLog(peer._id + " peerConnected")
@@ -134,7 +135,7 @@ class NanoConnectBaseClient extends EventEmitter {
                     loggingInLoop();
 
                 }
-            }, Math.floor((Math.random() * 1000) + 2000));
+            }, Math.floor((Math.random() * 4000) + 3000));
         }
         loggingInLoop();
     }
