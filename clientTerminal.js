@@ -9,8 +9,6 @@ var NanoParseMessage  = require('./clientParseMessage')
 function executeNanoTerminal(nanoClient, arguments) {
     return new Promise((resolve, reject) => {
         try {
-            console.log("got here")
-            console.log(arguments)
             //var  received = await nanoClient.block_count()
             //console.log("hello " + received);
             var returnPromise = null;
@@ -363,8 +361,6 @@ account_balance <accountAddress> \r\n\n`);
                 .help('h')
                 .alias('h', 'help')
                 .parse(arguments, (_err, argv, output) => {
-                    console.log(argv);
-                    console.log(output)
                     if (output != "") {
                         output = output.split("\n").join("\r\n");
                         output += "\r\n";
